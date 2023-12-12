@@ -1,0 +1,13 @@
+fastapi
+pydantic
+uvicorn[standard]
+python-multipart
+numpy
+Pillow
+tensorflow
+tensorflow_recommenders
+requests
+typing
+pandas
+
+
