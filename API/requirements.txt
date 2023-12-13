@@ -6,7 +6,6 @@ numpy
 Pillow
 tensorflow
 tensorflow_recommenders
-requests
 typing
 pandas
 

@@ -1,7 +1,7 @@
 import tensorflow as tf
 import tensorflow_recommenders as tfrs
-import numpy as np
 from typing import Dict, Text
+
 
 class FoodModel(tfrs.models.Model):
 
@@ -14,12 +14,14 @@ class FoodModel(tfrs.models.Model):
         self.food_model: tf.keras.layers.Layer = tf.keras.Sequential([
             tf.keras.layers.StringLookup(
                 vocabulary=unique_food_titles, mask_token=None),
-            tf.keras.layers.Embedding(len(unique_food_titles) + 1, embedding_dimension)
+            tf.keras.layers.Embedding(
+                len(unique_food_titles) + 1, embedding_dimension)
         ])
         self.user_model: tf.keras.layers.Layer = tf.keras.Sequential([
             tf.keras.layers.StringLookup(
                 vocabulary=unique_user_ids, mask_token=None),
-            tf.keras.layers.Embedding(len(unique_user_ids) + 1, embedding_dimension)
+            tf.keras.layers.Embedding(
+                len(unique_user_ids) + 1, embedding_dimension)
         ])
         self.rating_model = tf.keras.Sequential([
             tf.keras.layers.Dense(256, activation="relu"),
@@ -62,6 +64,6 @@ class FoodModel(tfrs.models.Model):
             predictions=rating_predictions,
         )
         retrieval_loss = self.retrieval_task(user_embeddings, food_embeddings)
-        
+
         return (self.rating_weight * rating_loss
                 + self.retrieval_weight * retrieval_loss)
