@@ -171,26 +171,23 @@ def generate_json(age_group: int, top_n: Optional[int] = 1000):
             # age group 1 to 3 years
             if age_group == 1:
                 if (recom_object.Calories <= 450 and
-                        recom_object.Protein <= 7 and
-                        recom_object.Fat <= 15 and
-                        recom_object.Carbohydrate <= 72 and
-                        recom_object.Fiber <= 7):
+                        recom_object.Protein <= 10 and
+                        recom_object.Carbohydrate <= 72
+                    ):
                     recommendation_objects.append(recom_object)
             # age group 4 to 6 years
             elif age_group == 2:
                 if (recom_object.Calories <= 467 and
-                        recom_object.Protein <= 9 and
-                        recom_object.Fat <= 17 and
-                        recom_object.Carbohydrate <= 74 and
-                        recom_object.Fiber <= 7):
+                        recom_object.Protein <= 13 and
+                        recom_object.Carbohydrate <= 74
+                    ):
                     recommendation_objects.append(recom_object)
             # age group 7 to 9 years
             elif age_group == 3:
                 if (recom_object.Calories <= 550 and
-                        recom_object.Protein <= 14 and
-                        recom_object.Fat <= 19 and
-                        recom_object.Carbohydrate <= 84 and
-                        recom_object.Fiber <= 8):
+                        recom_object.Protein <= 20 and
+                        recom_object.Carbohydrate <= 84
+                    ):
                     recommendation_objects.append(recom_object)
             else:
                 print("not available in age groups")
