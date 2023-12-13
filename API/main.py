@@ -196,24 +196,12 @@ def generate_json(age_group: int, top_n: Optional[int] = 1000):
                 print("not available in age groups")
 
         # Converts Recommendation objects to JSON form
-        data_to_save = jsonable_encoder({
+        json_encoder = jsonable_encoder({
             "random_user_id": random_user_id,
             "recommendations": recommendation_objects,
         })
 
-        # Specify the folder and filename
-        folder_path = "./json"
-        filename = "recomendation_output.json"
-        file_path = os.path.join(folder_path, filename)
-
-        # Ensure the folder exists
-        os.makedirs(folder_path, exist_ok=True)
-
-        # Save data to JSON file
-        with open(file_path, "w") as json_file:
-            json.dump(data_to_save, json_file)
-
-        return JSONResponse(content={"message": f"File saved at: {file_path}"})
+        return JSONResponse(content=json_encoder)
     except Exception as e:
         traceback.print_exc()
         return JSONResponse(content={"error": "Internal Server Error"}, status_code=500)
