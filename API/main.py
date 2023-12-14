@@ -7,13 +7,14 @@ import pandas as pd
 import numpy as np
 import re
 import json
+import ast
 
 from pydantic import BaseModel
 from fastapi import FastAPI
 from fastapi.responses import JSONResponse
 from fastapi.encoders import jsonable_encoder
 from food_model import FoodModel
-from typing import Optional
+from typing import Optional, List
 
 # Initialize Model
 df_recipes = pd.read_csv('data/recipes_reduce.csv')
@@ -93,10 +94,11 @@ app = FastAPI()
 class Recommendation(BaseModel):
     Name: str
     Images: str
-    RecipeIngredientQuantities: str
-    RecipeIngredientParts: str
+    Ingredient: List[str]
     AggregatedRating: float
     ReviewCount: float
+    Category: str
+    Description: str
     Calories: float
     Fat: float
     SaturatedFat: float
@@ -106,26 +108,24 @@ class Recommendation(BaseModel):
     Fiber: float
     Sugar: float
     Protein: float
-    RecipeInstructions: str
+    Instructions: List[str]
 
 
 # Route to generate and save JSON file
 
 
 @app.get("/generate_json/{age_group}")
-def generate_json(age_group: int, top_n: Optional[int] = 1000):
+def generate_json(age_group: int):
     try:
         # Get recommendation results
         recommendations, random_user_id = recommend_food_for_random_user(
-            model, df_recipes, top_n)
+            model, df_recipes, top_n=1000)
 
         # Create a Recommendation object from the recommendation results
         recommendation_objects = []
         for title in recommendations:
-            recipe_quantities = df_recipes[df_recipes['Name']
-                                           == title]['RecipeIngredientQuantities'].values[0]
-            recipe_parts = df_recipes[df_recipes['Name']
-                                      == title]['RecipeIngredientParts'].values[0]
+            ingredient = df_recipes[df_recipes['Name']
+                                    == title]['Ingredients'].values[0]
             aggregated_rating = df_recipes[df_recipes['Name']
                                            == title]['AggregatedRating'].values[0]
             review_count = df_recipes[df_recipes['Name']
@@ -147,15 +147,23 @@ def generate_json(age_group: int, top_n: Optional[int] = 1000):
             protein = df_recipes[df_recipes['Name']
                                  == title]['Protein'].values[0]
             instructions = df_recipes[df_recipes['Name']
-                                      == title]['RecipeInstructions'].values[0]
+                                      == title]['Instructions'].values[0]
+            description = df_recipes[df_recipes['Name']
+                                     == title]['Description'].values[0]
+            category = df_recipes[df_recipes['Name']
+                                  == title]['RecipeCategory'].values[0]
+
+            ingredient = ast.literal_eval(ingredient)
+            instructions = ast.literal_eval(instructions)
 
             recom_object = Recommendation(
                 Name=title,
                 Images=get_image_url(df_recipes, title),
-                RecipeIngredientQuantities=recipe_quantities,
-                RecipeIngredientParts=recipe_parts,
+                Ingredient=ingredient,
                 AggregatedRating=float(aggregated_rating),
                 ReviewCount=float(review_count),
+                Description=description,
+                Category=category,
                 Calories=float(calories),
                 Fat=float(fat),
                 SaturatedFat=float(saturated_fat),
@@ -165,29 +173,26 @@ def generate_json(age_group: int, top_n: Optional[int] = 1000):
                 Fiber=float(fiber),
                 Sugar=float(sugar),
                 Protein=float(protein),
-                RecipeInstructions=instructions
+                Instructions=instructions
             )
 
             # age group 1 to 3 years
             if age_group == 1:
-                if (recom_object.Calories <= 450 and
-                        recom_object.Protein <= 10 and
-                        recom_object.Carbohydrate <= 72
-                    ):
+                if (recom_object.Calories <= 450 or
+                        recom_object.Protein <= 7 or
+                        recom_object.Carbohydrate <= 72):
                     recommendation_objects.append(recom_object)
             # age group 4 to 6 years
             elif age_group == 2:
                 if (recom_object.Calories <= 467 and
                         recom_object.Protein <= 13 and
-                        recom_object.Carbohydrate <= 74
-                    ):
+                        recom_object.Carbohydrate <= 74):
                     recommendation_objects.append(recom_object)
             # age group 7 to 9 years
             elif age_group == 3:
                 if (recom_object.Calories <= 550 and
                         recom_object.Protein <= 20 and
-                        recom_object.Carbohydrate <= 84
-                    ):
+                        recom_object.Carbohydrate <= 84):
                     recommendation_objects.append(recom_object)
             else:
                 print("not available in age groups")
