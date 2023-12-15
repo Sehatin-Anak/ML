@@ -164,3 +164,4 @@ venv
 *.csv
 *.h5
 json/
+*.json
