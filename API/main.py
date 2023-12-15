@@ -220,7 +220,10 @@ def generate_json(age_group: int):
         with open(file_path, "w") as json_file:
             json.dump(json_encoder, json_file)
 
-        return JSONResponse(content={"message": f"File saved at: {file_path}"})
+        return JSONResponse(content={
+            "message": f"File saved at: {file_path}",
+            "recommendation_count": len(recommendation_objects)
+        })
     except Exception as e:
         traceback.print_exc()
         return JSONResponse(content={"error": "Internal Server Error"}, status_code=500)
