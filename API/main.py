@@ -6,8 +6,8 @@ import tensorflow_recommenders as tfrs
 import pandas as pd
 import numpy as np
 import re
-import json
 import ast
+import json
 
 from pydantic import BaseModel
 from fastapi import FastAPI
@@ -60,20 +60,21 @@ model(dummy_input)
 model.load_weights('model/food_recommendation_model.h5')
 
 
-def recommend_food_for_random_user(model, recipe_df, top_n=5):
-    random_user_id = df_reviews['AuthorId'].sample(
-        1).values[0]  # Pilih secara acak dari unique_user_ids
+def recommend_food_for_random_user(model, top_n=100):
+    random_user_id = df_reviews['AuthorId'].sample(1).values[0]
+    k = top_n
+
     index = tfrs.layers.factorized_top_k.BruteForce(model.user_model)
     index.index_from_dataset(
         tf.data.Dataset.zip(
             (Recipes.batch(100), Recipes.batch(100).map(model.food_model)))
     )
 
-    _, titles = index(tf.constant([str(random_user_id)]))
+    _, titles = index(tf.constant([str(random_user_id)]), k=k)
 
-    recommended_titles = [title.decode("utf-8")
-                          for title in titles[0, :top_n].numpy()]
+    recommended_titles = [title.decode("utf-8")for title in titles[0].numpy()]
     return recommended_titles, random_user_id
+
 
 # Function to get image URL for a given recipe name
 
@@ -119,7 +120,7 @@ def generate_json(age_group: int):
     try:
         # Get recommendation results
         recommendations, random_user_id = recommend_food_for_random_user(
-            model, df_recipes, top_n=1000)
+            model, top_n=100)
 
         # Create a Recommendation object from the recommendation results
         recommendation_objects = []
@@ -178,20 +179,20 @@ def generate_json(age_group: int):
 
             # age group 1 to 3 years
             if age_group == 1:
-                if (recom_object.Calories <= 450 or
-                        recom_object.Protein <= 7 or
+                if (recom_object.Calories <= 450 and
+                        recom_object.Protein <= 7 and
                         recom_object.Carbohydrate <= 72):
                     recommendation_objects.append(recom_object)
             # age group 4 to 6 years
             elif age_group == 2:
                 if (recom_object.Calories <= 467 and
-                        recom_object.Protein <= 13 and
+                        recom_object.Protein <= 9 and
                         recom_object.Carbohydrate <= 74):
                     recommendation_objects.append(recom_object)
             # age group 7 to 9 years
             elif age_group == 3:
                 if (recom_object.Calories <= 550 and
-                        recom_object.Protein <= 20 and
+                        recom_object.Protein <= 14 and
                         recom_object.Carbohydrate <= 84):
                     recommendation_objects.append(recom_object)
             else:
@@ -203,7 +204,21 @@ def generate_json(age_group: int):
             "recommendations": recommendation_objects,
         })
 
-        return JSONResponse(content=json_encoder)
+        # return JSONResponse(content=json_encoder)
+
+    # Specify the folder and filename
+        folder_path = "./json"
+        filename = "recomendation_output.json"
+        file_path = os.path.join(folder_path, filename)
+
+        # Ensure the folder exists
+        os.makedirs(folder_path, exist_ok=True)
+
+        # Save data to JSON file
+        with open(file_path, "w") as json_file:
+            json.dump(json_encoder, json_file)
+
+        return JSONResponse(content={"message": f"File saved at: {file_path}"})
     except Exception as e:
         traceback.print_exc()
         return JSONResponse(content={"error": "Internal Server Error"}, status_code=500)
