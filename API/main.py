@@ -204,9 +204,11 @@ def generate_json(age_group: int):
             "recommendations": recommendation_objects,
         })
 
+        # actual return
         # return JSONResponse(content=json_encoder)
 
-    # Specify the folder and filename
+        # just for testing
+        # Specify the folder and filename
         folder_path = "./json"
         filename = "recomendation_output.json"
         file_path = os.path.join(folder_path, filename)
