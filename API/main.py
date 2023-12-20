@@ -7,14 +7,25 @@ import pandas as pd
 import numpy as np
 import re
 import ast
-import json
+import gdown
 
+from zipfile import ZipFile
 from pydantic import BaseModel
 from fastapi import FastAPI
 from fastapi.responses import JSONResponse
 from fastapi.encoders import jsonable_encoder
 from food_model import FoodModel
-from typing import Optional, List
+from typing import List
+
+# Download Data
+url = 'https://drive.google.com/uc?id=1uUlLxPPFTKUVDvMHUYAuvezVmd0UFvKq'
+output = './data/models.zip'
+gdown.download(url=url, output=output)
+
+extract_folder = './data'
+with ZipFile(output, 'r') as modelFolder:
+    modelFolder.extractall(extract_folder)
+
 
 # Initialize Model
 df_recipes = pd.read_csv('data/recipes_reduce.csv')
@@ -57,7 +68,7 @@ for key in dummy_input:
 
 model(dummy_input)
 
-model.load_weights('model/food_recommendation_model.h5')
+model.load_weights('data/food_recommendation_model.h5')
 
 
 def recommend_food_for_random_user(model, top_n=100):

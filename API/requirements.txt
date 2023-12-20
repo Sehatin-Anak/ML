@@ -8,5 +8,7 @@ tensorflow
 tensorflow_recommenders
 typing
 pandas
+zipp==3.17.0
+gdown==4.7.1
 
 
