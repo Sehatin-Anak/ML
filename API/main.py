@@ -17,6 +17,11 @@ from fastapi.encoders import jsonable_encoder
 from food_model import FoodModel
 from typing import List
 
+folder_path = os.path.join(os.getcwd(), "data")
+
+if not os.path.exists(folder_path):
+    os.makedirs(folder_path)
+
 # Download Data
 url = 'https://drive.google.com/uc?id=1uUlLxPPFTKUVDvMHUYAuvezVmd0UFvKq'
 output = './data/models.zip'
