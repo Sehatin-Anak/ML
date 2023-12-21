@@ -160,3 +160,7 @@ cython_debug/
 #.idea/
 
 venv
+
+*.csv
+*.h5
+*.zip
