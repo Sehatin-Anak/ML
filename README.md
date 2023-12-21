@@ -36,7 +36,7 @@ Senak is an application that can help parents to get food recommendations that h
   <img src="https://github.com/Sehatin-Anak/ML/blob/main/preview.jpeg" width="300">
 </p>
 
-6. Click on the menu you like to see more details such as ingredient recipes, cooking methods, and descriptions.
+5. Click on the menu you like to see more details such as ingredient recipes, cooking methods, and descriptions.
 <p align="center">
   <img src="https://github.com/Sehatin-Anak/ML/blob/main/detail.jpeg" width="300">
   &emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;
