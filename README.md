@@ -16,7 +16,7 @@ Senak is an application that can help parents to get food recommendations that h
 7. [Miftah Rahmaddani]() - A296BSY2516 - Mobile Development -
 
 ### Installation
-1. Download the apk file [here](https://)
+1. Download the apk file [here](https://drive.google.com/file/d/1L6FguhPIlhAkRFHExcEG0ZISgg9k5dXt/view?usp=sharing)
 2. Install on your phone, make sure you already enable instalation form another source
 
 ### Using the Application
